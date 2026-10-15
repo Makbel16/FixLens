@@ -2,6 +2,7 @@ import { BoundingBox } from './ocr';
 import { RecognizedScreenType } from './screen';
 
 export type UserAction = 'REPEAT' | 'BACK' | 'SKIP' | 'NOT_WORKING' | 'MANUAL_OVERRIDE';
+export type TroubleshootingAction = UserAction;
 
 export interface TroubleshootingStep {
   stepId: string;

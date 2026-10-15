@@ -1,9 +1,10 @@
 import { OCRResult } from '../types/ocr';
 import { RecognizedScreenType, ScreenClassification, ScreenSignature } from '../types/screen';
-import { findElementByPhrase, normalizeText } from './ocrParser';
+import { normalizeText } from './ocrParser';
 
 // Definitive Screen Signatures for Windows 11 Diagnostics
 export const SCREEN_SIGNATURES: ScreenSignature[] = [
+  // 1. Critical Error Banner takes top precedence
   {
     screenType: 'WINDOWS_HOTSPOT_ERROR',
     requiredKeywords: [
@@ -11,30 +12,33 @@ export const SCREEN_SIGNATURES: ScreenSignature[] = [
       ['ethernet', 'wi fi', 'wifi', 'connection', 'cellular', 'turn on wi fi']
     ],
     keyElementPatterns: {
-      error_banner: /cant\s+set\s+up\s+mobile\s+hotspot/i,
+      error_banner: /cant\s+set\s+up\s+mobile\s+hotspot|we\s+cant\s+set\s+up/i,
       action_link: /settings|go\s+to\s+settings/i,
     },
-    minimumConfidence: 0.75,
+    minimumConfidence: 0.70,
   },
+  // 2. Active Verified Broadcasting State
   {
     screenType: 'WINDOWS_HOTSPOT_ACTIVE',
     requiredKeywords: [
       ['mobile hotspot', 'hotspot'],
-      ['share over', 'devices connected', 'network name', 'network password'],
-      ['on', 'connected', 'wi fi', 'wifi']
+      ['devices connected', '0 of', '1 of', '2 of', 'devices']
     ],
+    forbiddenKeywords: ['we cant set up', 'cant set up'],
     keyElementPatterns: {
       status_label: /devices\s+connected|share\s+over/i,
       hotspot_toggle: /mobile\s+hotspot/i,
     },
     minimumConfidence: 0.70,
   },
+  // 3. Dedicated Mobile Hotspot Settings Page
   {
     screenType: 'WINDOWS_SETTINGS_MOBILE_HOTSPOT',
     requiredKeywords: [
       ['mobile hotspot', 'hotspot'],
       ['share my internet', 'share over', 'share my internet connection', 'properties', 'power saving']
     ],
+    forbiddenKeywords: ['we cant set up', 'cant set up', 'devices connected'],
     keyElementPatterns: {
       hotspot_switch: /mobile\s+hotspot/i,
       share_over_dropdown: /share\s+over/i,
@@ -43,12 +47,14 @@ export const SCREEN_SIGNATURES: ScreenSignature[] = [
     },
     minimumConfidence: 0.70,
   },
+  // 4. Quick Settings Flyout
   {
     screenType: 'WINDOWS_QUICK_SETTINGS',
     requiredKeywords: [
-      ['wi fi', 'wifi', 'bluetooth', 'airplane mode', 'mobile hotspot', 'night light', 'accessibility', 'battery saver'],
-      ['wi fi', 'wifi', 'bluetooth', 'mobile hotspot']
+      ['quick settings', 'wi fi', 'bluetooth', 'airplane mode', 'mobile hotspot', 'night light'],
+      ['wi fi', 'wifi', 'bluetooth', 'mobile hotspot', 'airplane']
     ],
+    forbiddenKeywords: ['share my internet', 'devices connected'],
     keyElementPatterns: {
       mobile_hotspot_tile: /mobile\s+hotspot/i,
       wifi_tile: /wi\s*fi/i,
@@ -56,24 +62,29 @@ export const SCREEN_SIGNATURES: ScreenSignature[] = [
     },
     minimumConfidence: 0.65,
   },
+  // 5. Network & Internet Main Settings Page
   {
     screenType: 'WINDOWS_SETTINGS_NETWORK',
     requiredKeywords: [
-      ['network internet', 'network and internet', 'settings'],
-      ['mobile hotspot', 'advanced network settings', 'wi fi', 'ethernet', 'data usage', 'vpn']
+      ['network internet', 'network and internet', 'network'],
+      ['advanced network settings', 'data usage', 'vpn', 'ethernet']
     ],
+    forbiddenKeywords: ['we cant set up', 'cant set up', 'share my internet', 'devices connected'],
     keyElementPatterns: {
       mobile_hotspot_item: /mobile\s+hotspot/i,
       wifi_item: /wi\s*fi/i,
       ethernet_item: /ethernet/i,
     },
-    minimumConfidence: 0.70,
+    minimumConfidence: 0.65,
   },
+  // 6. Windows Desktop / Taskbar
   {
     screenType: 'WINDOWS_DESKTOP_TASKBAR',
     requiredKeywords: [
-      ['start', 'search', 'widgets', 'copilot', 'eng', 'am', 'pm']
+      ['start', 'search', 'widgets', 'copilot'],
+      ['eng', 'am', 'pm', '7', '8', '9', '10', '11', '12']
     ],
+    forbiddenKeywords: ['mobile hotspot', 'quick settings', 'share my internet'],
     keyElementPatterns: {
       network_icon: /eng|am|pm|search|start/i,
     },
@@ -143,7 +154,9 @@ export class ScreenClassifier {
         }
 
         const elementBonus = totalKeys.length > 0 ? (elementsFound / totalKeys.length) * 0.2 : 0;
-        const confidence = Math.min(1.0, groupScore * 0.8 + elementBonus);
+        // Priority weight: error signatures get a slight priority bump
+        const priorityBump = sig.screenType === 'WINDOWS_HOTSPOT_ERROR' ? 0.15 : 0;
+        const confidence = Math.min(1.0, groupScore * 0.8 + elementBonus + priorityBump);
 
         if (confidence >= sig.minimumConfidence && confidence > highestScore) {
           highestScore = confidence;
@@ -160,9 +173,14 @@ export class ScreenClassifier {
     }
 
     // Apply debounce / hysteresis smoothing to prevent state flicker
-    const smoothedType = this.applyHysteresis(bestMatch.screenType);
-    if (smoothedType !== bestMatch.screenType && bestMatch.screenType === 'UNKNOWN_SCREEN') {
+    if (bestMatch.screenType !== 'UNKNOWN_SCREEN') {
+      const smoothedType = this.applyHysteresis(bestMatch.screenType);
       bestMatch.screenType = smoothedType;
+    } else {
+      this.recentHistory.push('UNKNOWN_SCREEN');
+      if (this.recentHistory.length > this.historyCapacity) {
+        this.recentHistory.shift();
+      }
     }
 
     return bestMatch;
@@ -177,14 +195,13 @@ export class ScreenClassifier {
       this.recentHistory.shift();
     }
 
-    // If candidate has appeared at least 2 times in the last 3 samples, commit to it
     const counts: Record<string, number> = {};
     for (const t of this.recentHistory) {
       counts[t] = (counts[t] || 0) + 1;
     }
 
     for (const [type, count] of Object.entries(counts)) {
-      if (count >= 2) {
+      if (count >= 2 && type !== 'UNKNOWN_SCREEN') {
         return type as RecognizedScreenType;
       }
     }
