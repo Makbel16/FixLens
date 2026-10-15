@@ -1,0 +1,32 @@
+{
+  "rawText": "Start Search Widgets Copilot ENG 7:45 PM 10/14/2026",
+  "frameWidth": 1920,
+  "frameHeight": 1080,
+  "elements": [
+    {
+      "text": "Start",
+      "confidence": 0.98,
+      "boundingBox": { "x": 800, "y": 1030, "width": 45, "height": 35 }
+    },
+    {
+      "text": "Search",
+      "confidence": 0.95,
+      "boundingBox": { "x": 860, "y": 1030, "width": 55, "height": 35 }
+    },
+    {
+      "text": "Widgets",
+      "confidence": 0.92,
+      "boundingBox": { "x": 930, "y": 1030, "width": 60, "height": 35 }
+    },
+    {
+      "text": "ENG",
+      "confidence": 0.96,
+      "boundingBox": { "x": 1720, "y": 1035, "width": 35, "height": 30 }
+    },
+    {
+      "text": "7:45 PM",
+      "confidence": 0.97,
+      "boundingBox": { "x": 1820, "y": 1035, "width": 65, "height": 30 }
+    }
+  ]
+}

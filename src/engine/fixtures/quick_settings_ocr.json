@@ -1,0 +1,32 @@
+{
+  "rawText": "Quick Settings Wi-Fi Bluetooth Airplane mode Mobile hotspot Night light Battery saver Accessibility",
+  "frameWidth": 1920,
+  "frameHeight": 1080,
+  "elements": [
+    {
+      "text": "Wi-Fi",
+      "confidence": 0.96,
+      "boundingBox": { "x": 1540, "y": 720, "width": 80, "height": 45 }
+    },
+    {
+      "text": "Bluetooth",
+      "confidence": 0.94,
+      "boundingBox": { "x": 1640, "y": 720, "width": 90, "height": 45 }
+    },
+    {
+      "text": "Airplane mode",
+      "confidence": 0.93,
+      "boundingBox": { "x": 1750, "y": 720, "width": 110, "height": 45 }
+    },
+    {
+      "text": "Mobile hotspot",
+      "confidence": 0.97,
+      "boundingBox": { "x": 1540, "y": 780, "width": 120, "height": 45 }
+    },
+    {
+      "text": "Night light",
+      "confidence": 0.91,
+      "boundingBox": { "x": 1680, "y": 780, "width": 90, "height": 45 }
+    }
+  ]
+}
