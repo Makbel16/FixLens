@@ -1,0 +1,17 @@
+{
+  "rawText": "YouTube Home Subscriptions Library History Trending Music Movies Gaming",
+  "frameWidth": 1920,
+  "frameHeight": 1080,
+  "elements": [
+    {
+      "text": "YouTube",
+      "confidence": 0.99,
+      "boundingBox": { "x": 100, "y": 50, "width": 120, "height": 30 }
+    },
+    {
+      "text": "Subscriptions",
+      "confidence": 0.95,
+      "boundingBox": { "x": 100, "y": 150, "width": 140, "height": 25 }
+    }
+  ]
+}

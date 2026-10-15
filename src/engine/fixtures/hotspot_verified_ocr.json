@@ -1,0 +1,27 @@
+{
+  "rawText": "Settings Mobile hotspot On Share over Wi-Fi Properties Network name MyLaptop-Hotspot Network password secret123 Devices connected 0 of 8",
+  "frameWidth": 1920,
+  "frameHeight": 1080,
+  "elements": [
+    {
+      "text": "Mobile hotspot",
+      "confidence": 0.99,
+      "boundingBox": { "x": 520, "y": 80, "width": 150, "height": 30 }
+    },
+    {
+      "text": "On",
+      "confidence": 0.96,
+      "boundingBox": { "x": 1150, "y": 140, "width": 50, "height": 30 }
+    },
+    {
+      "text": "Share over Wi-Fi",
+      "confidence": 0.97,
+      "boundingBox": { "x": 520, "y": 200, "width": 180, "height": 28 }
+    },
+    {
+      "text": "Devices connected 0 of 8",
+      "confidence": 0.98,
+      "boundingBox": { "x": 520, "y": 360, "width": 260, "height": 30 }
+    }
+  ]
+}

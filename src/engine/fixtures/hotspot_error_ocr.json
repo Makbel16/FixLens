@@ -1,0 +1,22 @@
+{
+  "rawText": "Settings Mobile hotspot We can't set up mobile hotspot because your PC doesn't have an Ethernet, Wi-Fi, or cellular data connection.",
+  "frameWidth": 1920,
+  "frameHeight": 1080,
+  "elements": [
+    {
+      "text": "Mobile hotspot",
+      "confidence": 0.98,
+      "boundingBox": { "x": 520, "y": 80, "width": 150, "height": 30 }
+    },
+    {
+      "text": "We can't set up mobile hotspot",
+      "confidence": 0.97,
+      "boundingBox": { "x": 520, "y": 140, "width": 340, "height": 32 }
+    },
+    {
+      "text": "doesn't have an Ethernet, Wi-Fi, or cellular data connection.",
+      "confidence": 0.94,
+      "boundingBox": { "x": 520, "y": 175, "width": 520, "height": 28 }
+    }
+  ]
+}
