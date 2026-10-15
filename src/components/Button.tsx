@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  StyleProp,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -17,7 +18,7 @@ interface ButtonProps extends TouchableOpacityProps {
   variant?: ButtonVariant;
   loading?: boolean;
   icon?: React.ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Button: React.FC<ButtonProps> = ({

@@ -54,7 +54,7 @@ export const SCREEN_SIGNATURES: ScreenSignature[] = [
       ['quick settings', 'wi fi', 'bluetooth', 'airplane mode', 'mobile hotspot', 'night light'],
       ['wi fi', 'wifi', 'bluetooth', 'mobile hotspot', 'airplane']
     ],
-    forbiddenKeywords: ['share my internet', 'devices connected'],
+    forbiddenKeywords: ['share my internet', 'devices connected', 'we cant set up', 'cant set up'],
     keyElementPatterns: {
       mobile_hotspot_tile: /mobile\s+hotspot/i,
       wifi_tile: /wi\s*fi/i,
@@ -145,7 +145,8 @@ export class ScreenClassifier {
 
         for (const [key, pattern] of Object.entries(sig.keyElementPatterns)) {
           for (const el of ocr.elements) {
-            if (pattern.test(el.text)) {
+            const normEl = normalizeText(el.text);
+            if (pattern.test(el.text) || pattern.test(normEl)) {
               identifiedElements[key] = el.boundingBox;
               elementsFound++;
               break;

@@ -1,12 +1,11 @@
-import React from 'react';
-import { StyleSheet, View, ViewProps, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewProps, ViewStyle } from 'react-native';
 import colors from '../theme/colors';
 import spacing from '../theme/spacing';
 
 interface CardProps extends ViewProps {
   glow?: boolean;
   highlightColor?: string;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
 }
 
 export const Card: React.FC<CardProps> = ({

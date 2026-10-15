@@ -34,7 +34,8 @@
         {
           "cameraPermission": "Allow FixLens to access your camera to scan computer screens and provide live visual troubleshooting."
         }
-      ]
+      ],
+      "expo-asset"
     ]
   }
 }
