@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "FixLens",
+    "slug": "fixlens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0E17"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "FixLens requires camera access to scan computer screens and provide real-time AR troubleshooting guidance."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0E17"
+      },
+      "package": "com.fixlens.app",
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow FixLens to access your camera to scan computer screens and provide live visual troubleshooting."
+        }
+      ]
+    ]
+  }
+}
